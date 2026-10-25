@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>闻势 MarketPulse · AI 驱动的 A 股市场大势研判（真实数据）</title>
+<style>
+:root{--bg:#f5f7fa;--card:#fff;--ink:#1c2330;--ink2:#5b6472;--line:#e3e8ef;--blue:#2563eb;--blue-soft:#eaf1fe;--red:#d43c3c;--green:#1a9e5c;--amber:#b97a12;--amber-soft:#fdf3e0;--violet:#7c3aed;--violet-soft:#f1ebfd;--gray-soft:#eef1f5;--shadow:0 1px 3px rgba(16,24,40,.08);--mono:Consolas,SFMono-Regular,monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:"Microsoft YaHei","PingFang SC",system-ui,sans-serif;font-size:14px;line-height:1.55}
+.wrap{max-width:1280px;margin:0 auto;padding:0 20px 60px}
+header{background:linear-gradient(135deg,#12203a,#1d3357 60%,#24406e);color:#fff;padding:22px 0 0}
+.hd{max-width:1280px;margin:0 auto;padding:0 20px}
+.hd-top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}
+.hd h1{font-size:22px;font-weight:700}.hd h1 .en{font-weight:400;opacity:.7;font-size:14px;margin-left:8px}
+.hd .sub{opacity:.78;font-size:12.5px;margin-top:4px}
+.hd-meta{display:flex;gap:8px;flex-wrap:wrap;align-items:center;font-size:12px}
+.pill{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);border-radius:999px;padding:4px 11px}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+.dot.ok{background:#4ade80}.dot.warn{background:#fbbf24}.dot.err{background:#f87171}.dot.live{background:#60a5fa;animation:bl 1.6s infinite}
+@keyframes bl{0%,100%{opacity:1}50%{opacity:.35}}
+.tabs{display:flex;gap:2px;margin-top:18px;flex-wrap:wrap}
+.tab{padding:10px 16px;border-radius:10px 10px 0 0;cursor:pointer;font-size:13.5px;color:rgba(255,255,255,.72);border:none;background:transparent}
+.tab:hover{color:#fff;background:rgba(255,255,255,.08)}
+.tab.on{background:var(--bg);color:var(--ink);font-weight:600}
+.page{display:none;padding-top:22px}.page.on{display:block}
+.grid{display:grid;gap:14px}
+.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:960px){.g2,.g3,.g4{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);padding:16px 18px}
+.card h3{font-size:15px;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.card h3 .tag{font-size:11px;font-weight:500}
+.muted{color:var(--ink2);font-size:12px}.mono{font-family:var(--mono)}.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.up{color:var(--red)}.down{color:var(--green)}
+.badge{display:inline-flex;align-items:center;border-radius:5px;font-size:11px;padding:1.5px 7px;font-weight:600;white-space:nowrap}
+.b-fact{background:var(--blue-soft);color:var(--blue)}.b-infer{background:var(--violet-soft);color:var(--violet)}
+.b-unc{background:var(--amber-soft);color:var(--amber)}.b-ok{background:#e5f7ec;color:var(--green)}
+.b-err{background:#fdeaea;color:var(--red)}.b-warn{background:var(--amber-soft);color:var(--amber)}
+.hero{display:grid;grid-template-columns:290px 1fr;gap:18px}
+@media(max-width:960px){.hero{grid-template-columns:1fr}}
+.state-box{border-radius:12px;padding:20px;color:#fff;display:flex;flex-direction:column;gap:8px}
+.state-box .name{font-size:24px;font-weight:700}
+.conf-bar{height:8px;background:rgba(255,255,255,.25);border-radius:4px;overflow:hidden}
+.conf-bar i{display:block;height:100%;background:#fff}
+.st-0{background:linear-gradient(135deg,#64748b,#475569)}.st-1{background:linear-gradient(135deg,#2563eb,#1d4ed8)}
+.st-2{background:linear-gradient(135deg,#b45309,#92400e)}.st-3{background:linear-gradient(135deg,#b91c1c,#7f1d1d)}
+.concl{border-left:3px solid var(--line);padding:10px 14px;margin:10px 0;background:#fafbfd;border-radius:0 8px 8px 0}
+.concl .ct{font-weight:600;font-size:13.5px}.concl .cev{margin-top:6px;font-size:12px;color:var(--ink2)}
+.ev-ref{display:inline-block;background:var(--gray-soft);border:1px solid var(--line);border-radius:4px;padding:0 6px;margin:0 3px;font-family:var(--mono);font-size:11px;cursor:pointer}
+.ev-ref:hover{background:var(--blue-soft);border-color:var(--blue);color:var(--blue)}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th{background:#f2f5f9;text-align:left;padding:7px 10px;font-weight:600;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:7px 10px;border-bottom:1px solid #eef1f5;vertical-align:top}tr:last-child td{border-bottom:none}
+.ev-meta{font-size:11.5px;color:var(--ink2);margin-top:8px;line-height:1.7;border-top:1px dashed var(--line);padding-top:8px}
+.ev-meta b{color:var(--ink);font-weight:600}
+.big{font-size:22px;font-weight:700;font-family:var(--mono)}
+.trace ol{padding-left:20px;display:grid;gap:6px;font-size:12.5px}
+.trace code{background:var(--gray-soft);padding:1px 6px;border-radius:4px;font-family:var(--mono);font-size:11.5px}
+.seg{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.seg button{border:1px solid var(--line);background:#fff;border-radius:8px;padding:7px 14px;cursor:pointer;font-size:13px}
+.seg button.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.hrow{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #eef1f5;font-size:13px;flex-wrap:wrap}
+.hrow:last-child{border-bottom:none}
+.switch{position:relative;width:38px;height:20px;flex:none}
+.switch input{opacity:0;width:0;height:0}
+.switch i{position:absolute;inset:0;background:#cbd5e1;border-radius:10px;cursor:pointer;transition:.2s}
+.switch i:before{content:"";position:absolute;width:16px;height:16px;left:2px;top:2px;background:#fff;border-radius:50%;transition:.2s}
+.switch input:checked+i{background:var(--red)}.switch input:checked+i:before{transform:translateX(18px)}
+.btn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:7px 14px;cursor:pointer;font-size:13px}
+.btn:hover{border-color:var(--blue);color:var(--blue)}.btn.pri{background:var(--blue);border-color:var(--blue);color:#fff}
+.btn.pri:hover{background:#1d4ed8;color:#fff}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;align-items:center}
+.chart-wrap{width:100%;overflow:hidden}.chart-wrap svg{width:100%;height:auto;display:block}
+.legend{display:flex;gap:14px;font-size:11.5px;color:var(--ink2);margin-top:6px;flex-wrap:wrap}
+.legend i{width:10px;height:10px;border-radius:2px;display:inline-block;margin-right:4px;vertical-align:-1px}
+.mask{position:fixed;inset:0;background:rgba(15,23,42,.45);display:none;align-items:center;justify-content:center;z-index:50;padding:20px}
+.mask.on{display:flex}.modal{background:#fff;border-radius:14px;max-width:760px;width:100%;max-height:84vh;overflow:auto;padding:22px 24px}
+.modal h3{margin-bottom:12px}.modal .x{float:right;cursor:pointer;border:none;background:none;font-size:20px;color:var(--ink2)}
+.notice{background:var(--amber-soft);border:1px solid #f2ddb0;border-radius:10px;padding:10px 14px;font-size:12.5px;color:#7a5208;margin-bottom:14px}
+.err-banner{background:#fdeaea;border:1px solid #f5c2c2;border-radius:10px;padding:12px 14px;font-size:13px;color:#8a1f1f;margin-bottom:14px}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:12.5px}
+.kv b{color:var(--ink2);font-weight:500;white-space:nowrap}
+.mini{font-size:12px}
+input[type=text],select{border:1px solid var(--line);border-radius:8px;padding:7px 10px;font-size:13px;background:#fff;font-family:inherit}
+footer{margin-top:28px;padding-top:14px;border-top:1px solid var(--line);font-size:12px;color:var(--ink2);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.loading{padding:40px;text-align:center;color:var(--ink2)}
+.tl{position:relative;padding-left:16px;max-height:640px;overflow:auto}
+.tl:before{content:"";position:absolute;left:4px;top:6px;bottom:6px;width:2px;background:var(--line)}
+.tl-item{position:relative;padding:8px 0 8px 12px;border-bottom:1px solid #f1f4f8}
+.tl-item:before{content:"";position:absolute;left:-6px;top:14px;width:8px;height:8px;border-radius:50%;background:#94a3b8}
+.tl-item.high:before{background:var(--red)}
+.tl-time{font-size:11.5px;color:var(--ink2);font-family:var(--mono)}
+.tl-title{font-size:13.5px;font-weight:600;margin-top:2px}
+.tl-sum{font-size:12px;color:var(--ink2);margin-top:3px}
+.tagchip{display:inline-block;background:var(--gray-soft);border:1px solid var(--line);border-radius:6px;padding:1px 8px;font-size:11px;color:var(--ink2);cursor:pointer;margin:2px 4px 0 0}
+.tagchip.on{background:var(--blue-soft);border-color:var(--blue);color:var(--blue)}
+.bar{height:8px;border-radius:4px;background:#eef1f5;position:relative;overflow:hidden}
+.bar i{position:absolute;top:0;bottom:0;background:var(--red)}
+.bar i.neg{background:var(--green)}
+.thermo{height:14px;border-radius:7px;background:linear-gradient(90deg,#3b82f6,#f59e0b,#ef4444);position:relative;margin:8px 0}
+.thermo i{position:absolute;top:-3px;width:4px;height:20px;background:#111827;border-radius:2px}
+/* ---- 可视化页 ---- */
+.viz-note{font-size:11.5px;color:var(--ink2);margin-top:10px;border-top:1px dashed var(--line);padding-top:8px;line-height:1.65}
+.viz-note b{color:var(--ink)}
+.heat{display:grid;grid-template-columns:repeat(auto-fill,minmax(116px,1fr));gap:8px}
+.heat .tile{border:1px solid var(--line);border-radius:8px;padding:8px 10px;min-height:56px}
+.heat .tile .nm{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.heat .tile .vl{font-family:var(--mono);font-size:13px;margin-top:2px}
+.ruler{position:relative;height:16px;border-radius:4px;border:1px solid var(--line);background:linear-gradient(90deg,#e8f7ee,#fdf6e8,#fdeaea);margin-top:3px}
+.ruler i{position:absolute;top:-3px;width:4px;height:20px;background:#111827;border-radius:2px}
+.ruler .tick{position:absolute;top:-2px;width:1px;height:18px;background:rgba(0,0,0,.12)}
+.donut-lg{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.donut-lg svg{width:150px;height:150px;flex:none}
+.donut-lg ul{list-style:none;font-size:12.5px;display:grid;gap:5px}
+.donut-lg li span.sw{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px}
+.chart-wrap svg text{font-family:var(--mono)}
+</style>
+</head>
+<body>
+<header>
+  <div class="hd">
+    <div class="hd-top">
+      <div>
+        <h1>闻势 MarketPulse<span class="en">AI 驱动的 A 股市场大势研判 · 真实数据</span></h1>
+        <div class="sub">证据 → 归纳 → 状态研判 → 触发条件 ｜ 不预测涨跌 · 不提供仓位建议 · 结论全程可追溯</div>
+      </div>
+      <div class="hd-meta">
+        <span class="pill"><span class="dot live" id="hdDot"></span><span id="hdMode">真实数据 · 加载中</span></span>
+        <span class="pill">数据时点 <b id="hdDate">—</b></span>
+        <span class="pill" id="hdPhase">—</span>
+        <button class="btn" style="background:transparent;color:#fff;border-color:rgba(255,255,255,.35)" onclick="doRefresh()">立即刷新</button>
+      </div>
+    </div>
+    <nav class="tabs" id="tabs">
+      <button class="tab on" data-p="overview">总览研判</button>
+      <button class="tab" data-p="viz">📊 可视化</button>
+      <button class="tab" data-p="news">📰 新闻快报</button>
+      <button class="tab" data-p="sectors">板块与情绪</button>
+      <button class="tab" data-p="evidence">证据面板</button>
+      <button class="tab" data-p="replay">复盘日历</button>
+      <button class="tab" data-p="drill">钻取研究</button>
+      <button class="tab" data-p="health">数据健康</button>
+      <button class="tab" data-p="about">说明与合规</button>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap">
+<section class="page on" id="p-overview"><div class="loading" id="loading">正在从服务端拉取真实行情并生成研判…</div><div id="ovBody" style="display:none">
+  <div id="errBanner"></div>
+  <div class="hero">
+    <div>
+      <div class="state-box" id="stateBox"></div>
+      <div class="card" style="margin-top:14px"><h3>交易热度温度计 <span class="tag badge b-infer">描述性合成指标</span></h3><div id="thermoBox"></div></div>
+      <div class="card" style="margin-top:14px"><h3>研判要素</h3><div class="kv" id="stateMeta"></div></div>
+      <div class="card" style="margin-top:14px"><h3>信号投票明细</h3><div id="signalList"></div></div>
+    </div>
+    <div>
+      <div class="card">
+        <h3>上证指数 · 近 120 个交易日 <span class="tag muted" id="chartRange"></span></h3>
+        <div class="chart-wrap" id="mainChart"></div>
+        <div class="legend"><span><i style="background:#2563eb"></i>收盘价</span><span><i style="background:#93b4f5"></i>MA20</span><span id="lgEnd"></span></div>
+      </div>
+      <div class="grid g3" style="margin-top:14px" id="idxStrip"></div>
+      <div class="card" style="margin-top:14px"><h3>📰 今日要闻 <span class="tag muted" id="newsCountTag"></span></h3><div id="topNews"></div></div>
+    </div>
+  </div>
+  <div class="grid g2" style="margin-top:14px">
+    <div class="card">
+      <h3>核心结论 <span class="tag badge b-infer">研判引擎输出 · 全部可追溯</span></h3>
+      <div id="conclList"></div>
+      <div class="muted" style="margin-top:6px">点击 <span class="mono">E#</span> 查看证据原文与统计口径；结论均不含涨跌预测与仓位建议。</div>
+    </div>
+    <div>
+      <div class="card">
+        <h3>状态切换条件 <span class="tag badge b-fact">可证伪触发器</span></h3>
+        <div class="muted" style="margin-bottom:8px">当下列任一条件成立时，研判状态应重新评估。<span class="badge b-warn">接近触发</span>表示当前值距阈值较近（仅提示，不预测）。</div>
+        <table id="triggerTable"></table>
+      </div>
+      <div class="card" style="margin-top:14px"><h3>本轮取数计划 <span class="tag badge b-fact">工具调用追溯</span></h3><div class="trace" id="traceBox"></div></div>
+    </div>
+  </div>
+</div></section>
+
+<section class="page" id="p-viz">
+  <div class="notice">📊 本页图表全部由<b>真实数据</b>与<b>明示规则的派生计算</b>生成（每图下方标注口径）。颜色与长度仅表示读数方向与大小，<b>不代表好坏评价，也不构成涨跌预测</b>；数据不可用时图表位置显示"该数据源不可用"，不做任何插值或虚构补齐。</div>
+
+  <div class="grid g2">
+    <div class="card">
+      <h3>市场多维画像 <span class="tag badge b-infer">规则归一化 · 0-100</span></h3>
+      <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap">
+        <div style="flex:none;width:280px" id="vizRadar"></div>
+        <div style="flex:1;min-width:200px" id="vizRadarList"></div>
+      </div>
+      <div class="viz-note" id="vizRadarNote"></div>
+    </div>
+    <div class="card">
+      <h3>全A涨跌幅分布 <span class="tag badge b-fact">当日截面 · 真实</span></h3>
+      <div class="chart-wrap" id="vizBreadth"></div>
+      <div class="viz-note" id="vizBreadthNote"></div>
+    </div>
+  </div>
+
+  <div class="grid g2" style="margin-top:14px">
+    <div class="card">
+      <h3>六指数归一化对比 <span class="tag muted">近120交易日 · 起点=100</span></h3>
+      <div class="chart-wrap" id="vizNorm"></div>
+      <div class="legend" id="vizNormLg"></div>
+      <div class="viz-note" id="vizNormNote"></div>
+    </div>
+    <div class="card">
+      <h3>指数相关性热力图 <span class="tag badge b-infer">近60日日收益</span></h3>
+      <div class="chart-wrap" id="vizCorr"></div>
+      <div class="viz-note" id="vizCorrNote"></div>
+    </div>
+  </div>
+
+  <div class="grid g2" style="margin-top:14px">
+    <div class="card">
+      <h3>风格轮动 <span class="tag badge b-infer">滚动20日对数强弱</span></h3>
+      <div class="chart-wrap" id="vizStyle"></div>
+      <div class="legend"><span><i style="background:#7c3aed"></i>中证500 / 沪深300（大小盘）</span><span><i style="background:#0891b2"></i>创业板指 / 上证（成长-价值代理）</span><span class="muted">0 轴以上＝前者相对占优</span></div>
+      <div class="viz-note" id="vizStyleNote"></div>
+    </div>
+    <div class="card">
+      <h3>两融余额 与 上证指数 <span class="tag badge b-fact">双轴 · 官方T-1</span></h3>
+      <div class="chart-wrap" id="vizMargin"></div>
+      <div class="legend"><span><i style="background:#b97a12"></i>两融余额（左轴·亿元）</span><span><i style="background:#2563eb"></i>上证指数（右轴·点）</span></div>
+      <div class="viz-note" id="vizMarginNote"></div>
+    </div>
+  </div>
+
+  <div class="grid g2" style="margin-top:14px">
+    <div class="card">
+      <h3>量能走势 与 近一年分布 <span class="tag badge b-fact">真实成交额</span></h3>
+      <div class="chart-wrap" id="vizAmtLine"></div>
+      <div class="chart-wrap" style="margin-top:10px" id="vizAmtHist"></div>
+      <div class="viz-note" id="vizAmtNote"></div>
+    </div>
+    <div class="card">
+      <h3>上证日收益分布 <span class="tag badge b-infer">近250交易日</span></h3>
+      <div class="chart-wrap" id="vizRet"></div>
+      <div class="viz-note" id="vizRetNote"></div>
+    </div>
+  </div>
+
+  <div class="grid g2" style="margin-top:14px">
+    <div class="card">
+      <h3>估值分位标尺 <span class="tag badge b-fact">PE / PB 历史分位</span></h3>
+      <div id="vizVal"></div>
+      <div class="viz-note" id="vizValNote"></div>
+    </div>
+    <div class="card">
+      <h3>涨跌停结构 与 连板梯队 <span class="tag badge b-fact">涨停池真实数据</span></h3>
+      <div class="chart-wrap" id="vizZT"></div>
+      <div class="donut-lg" style="margin-top:8px" id="vizZTDonut"></div>
+      <div class="chart-wrap" style="margin-top:10px" id="vizLadder"></div>
+      <div class="viz-note" id="vizZTNote"></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:14px">
+    <h3>行业板块热力图 <span class="tag muted">色深＝涨跌幅绝对值大小</span></h3>
+    <div class="heat" id="vizSectorHeat"></div>
+    <div class="viz-note" id="vizSectorNote"></div>
+  </div>
+
+  <div class="grid g2" style="margin-top:14px">
+    <div class="card">
+      <h3>新闻 24 小时发布节奏 <span class="tag badge b-infer">当日归档</span></h3>
+      <div class="chart-wrap" id="vizNewsHour"></div>
+      <div class="viz-note" id="vizNewsHourNote"></div>
+    </div>
+    <div class="card">
+      <h3>新闻分类构成 <span class="tag badge b-infer">规则自动标注</span></h3>
+      <div class="donut-lg" id="vizNewsCat"></div>
+      <div class="viz-note" id="vizNewsCatNote"></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:14px">
+    <h3>市场宽度 与 上证指数 <span class="tag badge b-infer">日频序列 · 自系统运行起累积</span></h3>
+    <div class="chart-wrap" id="vizBreadthTrend"></div>
+    <div class="viz-note" id="vizBreadthTrendNote"></div>
+  </div>
+</section>
+
+<section class="page" id="p-news">
+  <div class="notice">📰 新闻来自财经快讯真实抓取，<b>每日累积归档</b>（保留近 30 天）。分类与重要度为<b>规则自动标注（归纳）</b>，可能存在归类偏差；新闻仅作事件背景，不构成任何投资建议。</div>
+  <div class="card" style="margin-bottom:14px">
+    <div class="btn-row">
+      <b class="mini">日期</b><select id="newsDate" onchange="loadNews()"></select>
+      <input type="text" id="newsQ" placeholder="搜索关键词…" oninput="debouncedNews()" style="min-width:200px">
+      <button class="btn" onclick="setCat('')">全部</button>
+      <span id="catChips"></span>
+      <button class="btn pri" onclick="loadNews()">刷新列表</button>
+      <span class="muted" id="newsMeta"></span>
+    </div>
+    <div id="newsStats" class="grid g4"></div>
+  </div>
+  <div class="grid g2">
+    <div class="card"><h3>快讯时间线 <span class="tag muted">倒序</span></h3><div class="tl" id="newsList"></div></div>
+    <div>
+      <div class="card"><h3>分类构成 · 24小时分布 <span class="tag badge b-infer">规则自动标注</span></h3>
+        <div class="donut-lg" id="newsCatChart"></div>
+        <div class="chart-wrap" style="margin-top:10px" id="newsHourChart"></div>
+        <div class="viz-note">口径：分类基于关键词规则（可能存在归类偏差，保留"其他"不强行归类）；分布按快讯发布时间的小时统计。</div></div>
+      <div class="card" style="margin-top:14px"><h3>关键词热度 <span class="tag badge b-infer">词表命中统计</span></h3><div id="hotWords"></div></div>
+      <div class="card" style="margin-top:14px"><h3>分类分布</h3><div id="catDist"></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="page" id="p-sectors">
+  <div class="card" style="margin-bottom:14px"><h3>行业板块热力图 <span class="tag muted">真实数据 · 色深＝涨跌幅绝对值</span></h3><div class="heat" id="sectorHeatTop"></div>
+    <div class="viz-note">口径：行业板块当日涨跌幅（东方财富板块接口）；板块接口不可用时使用涨停池行业分布替代口径（计数），界面会显式标注。</div></div>
+  <div class="grid g2">
+    <div class="card"><h3>行业板块涨跌榜 <span class="tag muted">真实数据 · 当日</span></h3><div id="sectorList" style="max-height:520px;overflow:auto"></div></div>
+    <div>
+      <div class="card"><h3>连板梯队 <span class="tag badge b-fact">涨停池真实连板数</span></h3><div id="ladder"></div></div>
+      <div class="card" style="margin-top:14px"><h3>温度计分项 <span class="tag badge b-infer">描述性</span></h3><div id="thermoParts"></div>
+        <div class="muted" style="margin-top:8px" id="thermoCal"></div></div>
+      <div class="card" style="margin-top:14px"><h3>涨跌分布 <span class="tag badge b-fact">全A截面</span></h3><div id="distBox"></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="page" id="p-evidence">
+  <div class="notice">⚖ 证据三类：<b>事实</b>（数据源原始读数）、<b>归纳</b>（按明示规则计算的统计结论）、<b>推断</b>（含不确定性的解释性判断）。每条证据标注来源、时点、单位与统计口径。</div>
+  <div class="grid g3" id="evGrid"></div>
+</section>
+
+<section class="page" id="p-replay">
+  <div class="notice">🗓 复盘用于回看<b>过去某日的研判状态与证据</b>（服务端已按交易日保存快照）。历史研判仅供复盘理解，不构成对未来的任何判断。</div>
+  <div class="card" style="margin-bottom:14px"><div class="btn-row"><b class="mini">选择日期</b><select id="replayDate" onchange="loadReplay()"></select><span class="muted" id="replayMeta"></span></div><div id="replayBox"></div></div>
+  <div class="card"><h3>状态演变时间线 <span class="tag badge b-fact">仅在状态变化时记录</span></h3><div id="stateTimeline"></div></div>
+</section>
+
+<section class="page" id="p-drill">
+  <div class="seg" id="drillSeg">
+    <button class="on" data-k="style">风格钻取</button><button data-k="sector">行业板块（真实）</button><button data-k="risk">风险变量</button>
+  </div>
+  <div class="card" style="margin-bottom:14px"><div id="drillPick"></div></div>
+  <div id="drillOut"></div>
+</section>
+
+<section class="page" id="p-health">
+  <div class="err-banner" id="healthBanner" style="display:none"></div>
+  <div class="grid g2">
+    <div class="card"><h3>数据源状态</h3>
+      <div class="muted" style="margin-bottom:8px">数据缺失/过期/调用失败时，相关证据标记为不可用并下调结论置信度，<b>不会静默生成"正常"结论</b>。</div>
+      <div id="healthList"></div></div>
+    <div>
+      <div class="card"><h3>故障注入演练 <span class="tag badge b-warn">合规测试用</span></h3>
+        <div class="muted" style="margin-bottom:10px">真实触发对应数据集的调用失败，验证降级行为。</div>
+        <div id="faultList"></div>
+        <button class="btn pri" style="margin-top:12px" onclick="applyFault()">应用演练并重新取数</button></div>
+      <div class="card" style="margin-top:14px"><h3>数据源优先级与实际使用 <span class="tag badge b-fact">如实标注</span></h3><div id="providerBox"></div></div>
+      <div class="card" style="margin-top:14px"><h3>自动更新</h3>
+        <div class="kv" style="margin-top:6px"><b>调度状态</b><span id="schedInfo">—</span><b>抓取耗时</b><span id="fetchInfo">—</span><b>新闻归档</b><span id="newsArchiveInfo">—</span></div>
+        <div class="muted" style="margin-top:8px">服务端按北京时间自动刷新：交易时段每 15 分钟、收盘后 10 分钟一次、非交易时段每 2 小时；页面每 60 秒自动拉取最新快照。</div>
+        <button class="btn pri" style="margin-top:12px" onclick="doRefresh()">立即刷新</button>
+        <button class="btn" style="margin-top:12px" onclick="exportReport()">导出研判报告</button></div>
+    </div>
+  </div>
+</section>
+
+<section class="page" id="p-about">
+  <div class="grid g2">
+    <div class="card"><h3>🧭 产品定位</h3>
+      <p class="mini" style="margin-bottom:10px">基于行情结构、市场宽度、风格轮动、估值、流动性、情绪与事件的<b>真实数据</b>，帮助理解当前市场状态、主要矛盾及判断可能改变的条件。服务端持续抓取并按交易日自动更新。</p>
+      <div class="kv"><b>目标用户</b><span>投研人员、策略研究员、需要每日理解市场结构的投资者</span>
+      <b>AI 角色</b><span>证据整理员 + 规则化研判引擎：取数→计算→归纳→输出带置信度的状态研判</span>
+      <b>核心框架</b><span>事实 → 归纳 → 状态 → 触发条件，四层分离、全程可追溯</span></div></div>
+    <div class="card"><h3>🚦 合规边界</h3>
+      <div class="mini" style="display:grid;gap:8px;margin-top:6px">
+        <div>❌ 不输出确定性涨跌预测、目标点位、收益承诺</div>
+        <div>❌ 不给出买入/卖出/加仓/减仓/清仓等仓位与买卖建议</div>
+        <div>✅ 事实、归纳与不确定推断以徽标严格区分</div>
+        <div>✅ 每条结论可追溯至原始字段，标注来源、时点、单位与统计口径</div>
+        <div>✅ 数据缺失、过期或调用失败时显式告警并挂起证据</div>
+        <div>✅ 新闻分类与重要度为规则自动标注（归纳），不作倾向性解读</div></div></div>
+    <div class="card"><h3>🔌 数据来源</h3>
+      <div class="mini" style="display:grid;gap:8px;margin-top:6px">
+        <div><b>官方源（已适配，配置 Key 后自动优先）</b>：同花顺金融数据 API（扶摇 fuyao.aicubes.cn）——历史K线、行情快照、涨停/跌停/炸板池、涨停市场统计（封板率/精确连板）、交易日历、快讯、全市场宽度（需 <span class="mono">FUYAO_BREADTH=1</span>）</div>
+        <div><b>当前生效（未配置 Key 时）</b>：东方财富（K线/快照/宽度/涨跌停池/两融/板块/快讯），备用源：腾讯财经、新浪财经（主源不可用时自动启用并如实标注）</div>
+        <div><b>估值</b>：蛋卷指数估值（PE/PB 与历史分位）；<b>iFinD MCP</b>：适配器接口位已实现，配置 <span class="mono">IFIND_MCP_URL</span> 后启用</div>
+        <div><b>官方源尚未接入的部分</b>：主力资金、高频分时、异动解读、龙虎榜、集合竞价、财务报表——需账号开通对应 capability 或仅在同花顺 AI 客户端内提供，见 README「官方源接入说明」</div></div></div>
+    <div class="card"><h3>🧪 已知边界与未做事项</h3>
+      <div class="mini" style="display:grid;gap:8px;margin-top:6px">
+        <div>· 研判引擎为<b>规则驱动</b>（11 项信号投票），非统计预测模型——有意为之的合规设计</div>
+        <div>· 新闻分类基于关键词规则，存在归类偏差；保留"其他"类别不强行归类</div>
+        <div>· 宽度/两融等历史序列自系统首次运行起累积，早期缺口如实保留</div>
+        <div>· 未做：个股推荐、组合优化、自动交易、用户画像</div></div></div>
+  </div>
+</section>
+
+<footer><span>闻势 MarketPulse · 真实数据 · 每交易日自动更新</span><span>本产品所有输出均为研究性信息，不构成投资建议</span></footer>
+</div>
+
+<div class="mask" id="mask" onclick="if(event.target===this)closeModal()"><div class="modal"><button class="x" onclick="closeModal()">×</button><div id="modalBody"></div></div></div>
+
+<script>
+"use strict";
+let S=null, NEWS=null, REPLAY=null, REPLAY_DATES=[], STATE_LOG=[];
+const FAULTS=["kline","breadth","margin","valuation","news","sector","pool"];
+const FAULT_LABEL={kline:"指数日K线",quote:"实时快照",breadth:"市场宽度",pool:"涨跌停池",margin:"两融余额",valuation:"指数估值",sector:"行业板块",news:"财经快讯"};
+const SIM=new Set();
+const CATS=[["policy","政策监管"],["macro","宏观经济"],["capital","资金市场"],["company","公司动态"],["industry","产业行业"],["global","海外外围"],["other","其他"]];
+let curCat="";
+const fmt=(n,d=2)=>n==null||isNaN(n)?"—":Number(n).toLocaleString("zh-CN",{minimumFractionDigits:d,maximumFractionDigits:d});
+const pct=(n,d=2)=>n==null||isNaN(n)?"—":(n>=0?"+":"")+Number(n).toFixed(d)+"%";
+const cls=n=>n>=0?"up":"down";
+const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+async function api(u){const r=await fetch(u);if(!r.ok)throw new Error("HTTP "+r.status);return r.json()}
+
+async function load(){
+  try{ S=await api("/api/snapshot"); }
+  catch(e){ document.getElementById("loading").innerHTML='<div class="err-banner">无法连接服务端：'+e.message+'。请确认服务已启动。</div>'; return; }
+  document.getElementById("loading").style.display="none";
+  document.getElementById("ovBody").style.display="block";
+  renderAll(); initNewsDates(); initReplayDates();
+}
+async function doRefresh(){
+  const b=document.querySelector('header .btn');if(b)b.textContent="刷新中…";
+  try{ await api("/api/refresh"); await load(); if(document.getElementById("p-news").classList.contains("on")) loadNews(); }
+  catch(e){ alert("刷新失败："+e.message); } finally{ if(b)b.textContent="立即刷新"; }
+}
+async function applyFault(){ await api("/api/simulate?set="+encodeURIComponent([...SIM].join(","))); await load(); }
+function exportReport(){ location.href="/api/report"; }
+
+function badge(t){const m={fact:["b-fact","事实"],infer:["b-infer","归纳"],judge:["b-unc","推断"],unc:["b-unc","推断"]};const x=m[t]||m.judge;return '<span class="badge '+x[0]+'">'+x[1]+'</span>'}
+function spark(arr,color,w=240,h=44){
+  const v=(arr||[]).filter(x=>typeof x==="number"&&!isNaN(x));
+  if(v.length<2)return '<div class="muted" style="font-size:12px">历史数据累积中…</div>';
+  const min=Math.min(...v),max=Math.max(...v),rng=max-min||1;
+  const pts=v.map((x,i)=>(i/(v.length-1)*w).toFixed(1)+","+(h-3-(x-min)/rng*(h-6)).toFixed(1)).join(" ");
+  return '<svg viewBox="0 0 '+w+' '+h+'" preserveAspectRatio="none" style="width:100%;height:'+h+'px"><polyline points="'+pts+'" fill="none" stroke="'+color+'" stroke-width="1.6"/></svg>';
+}
+function lineChart(rows){
+  const w=640,h=200,n=rows.length,c=rows.map(r=>r.c);
+  const ma20=rows.map((r,i)=>{if(i<19)return null;let s=0;for(let j=i-19;j<=i;j++)s+=rows[j].c;return s/20});
+  const all=c.concat(ma20.filter(x=>x));const min=Math.min(...all),max=Math.max(...all),rng=max-min||1;
+  const X=i=>i/(n-1)*w,Y=v=>h-14-(v-min)/rng*(h-30);
+  let p1="",p2="";
+  rows.forEach((r,i)=>{p1+=X(i).toFixed(1)+","+Y(r.c).toFixed(1)+" ";if(ma20[i])p2+=X(i).toFixed(1)+","+Y(ma20[i]).toFixed(1)+" "});
+  const grid=[0,.25,.5,.75,1].map(t=>{const y=(14+t*(h-30)).toFixed(0);const v=max-t*rng;return '<line x1="0" y1="'+y+'" x2="'+w+'" y2="'+y+'" stroke="#eef1f5"/><text x="2" y="'+(y-3)+'" font-size="9" fill="#94a3b8">'+Math.round(v)+'</text>'}).join("");
+  return '<svg viewBox="0 0 '+w+' '+h+'"><rect width="'+w+'" height="'+h+'" fill="#fff"/>'+grid+'<polyline points="'+p2+'" fill="none" stroke="#93b4f5" stroke-width="1.4"/><polyline points="'+p1+'" fill="none" stroke="#2563eb" stroke-width="2"/></svg>';
+}
+
+/* ================= 通用图表：原生 SVG，零第三方依赖 ================= */
+const PAL=["#2563eb","#7c3aed","#0891b2","#d43c3c","#b45309","#1a9e5c","#db2777","#0d9488"];
+const svgWrap=(w,h,inner)=>'<svg viewBox="0 0 '+w+' '+h+'" style="width:100%;height:auto;display:block">'+inner+'</svg>';
+const axv=v=>{const a=Math.abs(v);return !isFinite(a)?"—":(a>=10000?Math.round(v):(a>=100?v.toFixed(0):(a>=10?v.toFixed(1):v.toFixed(2))))};
+
+function radarChart(items,size){
+  size=size||280;
+  const has=items.filter(x=>x.v!=null);
+  if(has.length<3)return '<div class="muted">可用维度不足（不可用的维度已跳过，未做填补）</div>';
+  const n=items.length,cx=size/2,cy=size/2,R=size/2-46,ang=i=>-Math.PI/2+i*2*Math.PI/n;
+  let s="";
+  [.25,.5,.75,1].forEach(t=>{s+='<polygon points="'+items.map((_,i)=>(cx+Math.cos(ang(i))*R*t).toFixed(1)+","+(cy+Math.sin(ang(i))*R*t).toFixed(1)).join(" ")+'" fill="none" stroke="#e8ecf3"/>';});
+  items.forEach((it,i)=>{
+    s+='<line x1="'+cx+'" y1="'+cy+'" x2="'+(cx+Math.cos(ang(i))*R).toFixed(1)+'" y2="'+(cy+Math.sin(ang(i))*R).toFixed(1)+'" stroke="#e8ecf3"/>';
+    const lx=cx+Math.cos(ang(i))*(R+24),ly=cy+Math.sin(ang(i))*(R+18);
+    s+='<text x="'+lx.toFixed(1)+'" y="'+ly.toFixed(1)+'" font-size="11" text-anchor="middle" font-weight="600" fill="'+(it.v==null?"#cbd5e1":"#1c2330")+'">'+esc(it.k)+'</text>';
+    s+='<text x="'+lx.toFixed(1)+'" y="'+(ly+12).toFixed(1)+'" font-size="9.5" text-anchor="middle" fill="#94a3b8">'+esc(it.raw)+'</text>';
+  });
+  s+='<polygon points="'+items.map((it,i)=>{const r=R*(it.v==null?0:Math.max(0,Math.min(100,it.v))/100);return (cx+Math.cos(ang(i))*r).toFixed(1)+","+(cy+Math.sin(ang(i))*r).toFixed(1)}).join(" ")+'" fill="rgba(37,99,235,.16)" stroke="#2563eb" stroke-width="1.8" stroke-linejoin="round"/>';
+  items.forEach((it,i)=>{if(it.v==null)return;const r=R*Math.max(0,Math.min(100,it.v))/100;
+    s+='<circle cx="'+(cx+Math.cos(ang(i))*r).toFixed(1)+'" cy="'+(cy+Math.sin(ang(i))*r).toFixed(1)+'" r="3.2" fill="#2563eb"/>';});
+  return svgWrap(size,size,s);
+}
+
+function barChart(items,opt){
+  opt=opt||{};
+  if(!items||!items.length)return '<div class="muted">该数据源不可用，未做任何插值或虚构补齐</div>';
+  const w=opt.w||620,h=opt.h||212,pl=42,pr=10,pt=16,pb=30;
+  const vals=items.map(x=>x.v||0);
+  const mx=Math.max(0,...vals),mn=Math.min(0,...vals),R=(mx-mn)||1;
+  const Y=v=>pt+(mx-v)/R*(h-pt-pb),bw=(w-pl-pr)/items.length;
+  let s="";
+  for(let t=0;t<=3;t++){const y=pt+t/3*(h-pt-pb);
+    s+='<line x1="'+pl+'" y1="'+y.toFixed(1)+'" x2="'+(w-pr)+'" y2="'+y.toFixed(1)+'" stroke="#f1f4f8"/><text x="2" y="'+(y+3).toFixed(1)+'" font-size="9" fill="#94a3b8">'+axv(mx-t/3*R)+'</text>';}
+  items.forEach((it,i)=>{
+    const v=it.v||0,yv=Y(v),yz=Y(0),top=Math.min(yv,yz),hh=Math.max(1.5,Math.abs(yz-yv));
+    s+='<rect x="'+(pl+i*bw+bw*.16).toFixed(1)+'" y="'+top.toFixed(1)+'" width="'+(bw*.68).toFixed(1)+'" height="'+hh.toFixed(1)+'" rx="2" fill="'+(it.color||"#2563eb")+'"/>';
+    if(opt.showVal!==false)s+='<text x="'+(pl+i*bw+bw/2).toFixed(1)+'" y="'+(top-4).toFixed(1)+'" font-size="9.5" text-anchor="middle" fill="#5b6472">'+esc(it.text||fmt(v,0))+'</text>';
+    s+='<text x="'+(pl+i*bw+bw/2).toFixed(1)+'" y="'+(h-10).toFixed(1)+'" font-size="9.5" text-anchor="middle" fill="#5b6472">'+esc(it.label)+'</text>';
+  });
+  s+='<line x1="'+pl+'" y1="'+Y(0).toFixed(1)+'" x2="'+(w-pr)+'" y2="'+Y(0).toFixed(1)+'" stroke="#cbd5e1"/>';
+  return svgWrap(w,h,s);
+}
+
+function multiLine(series,opt){
+  opt=opt||{};
+  const good=(series||[]).filter(s=>s.pts&&s.pts.length>1);
+  if(!good.length)return '<div class="muted">该数据源不可用，未做任何插值或虚构补齐</div>';
+  const w=opt.w||620,h=opt.h||232,pl=46,pr=12,pt=12,pb=26;
+  const n=Math.max(...good.map(s=>s.pts.length));
+  const dates=good[0].pts.map(p=>p.d);
+  let min=Infinity,max=-Infinity;
+  good.forEach(s=>s.pts.forEach(p=>{if(p.v!=null&&isFinite(p.v)){min=Math.min(min,p.v);max=Math.max(max,p.v)}}));
+  if(opt.zeroLine){min=Math.min(min,0);max=Math.max(max,0);}
+  if(!isFinite(min)||!isFinite(max))return '<div class="muted">该数据源不可用</div>';
+  const pad=(max-min)*.08||1;min-=pad;max+=pad;
+  const X=i=>pl+i/(n-1)*(w-pl-pr),Y=v=>pt+(max-v)/(max-min)*(h-pt-pb);
+  let s="";
+  for(let t=0;t<=4;t++){const y=pt+t/4*(h-pt-pb);
+    s+='<line x1="'+pl+'" y1="'+y.toFixed(1)+'" x2="'+(w-pr)+'" y2="'+y.toFixed(1)+'" stroke="#f1f4f8"/><text x="2" y="'+(y+3).toFixed(1)+'" font-size="9" fill="#94a3b8">'+axv(max-t/4*(max-min))+'</text>';}
+  if(opt.zeroLine)s+='<line x1="'+pl+'" y1="'+Y(0).toFixed(1)+'" x2="'+(w-pr)+'" y2="'+Y(0).toFixed(1)+'" stroke="#cbd5e1" stroke-dasharray="4 3"/>';
+  good.forEach((se,si)=>{
+    const pts=se.pts.map((p,i)=>p.v==null?null:X(i).toFixed(1)+","+Y(p.v).toFixed(1)).filter(Boolean).join(" ");
+    s+='<polyline points="'+pts+'" fill="none" stroke="'+(se.color||PAL[si%PAL.length])+'" stroke-width="'+(se.width||1.7)+'"/>';});
+  [0,Math.floor((n-1)/2),n-1].forEach(i=>{if(dates[i])s+='<text x="'+X(i).toFixed(1)+'" y="'+(h-7)+'" font-size="9" text-anchor="middle" fill="#94a3b8">'+dates[i]+'</text>';});
+  return svgWrap(w,h,s);
+}
+
+function dualLine(L,Rg){
+  if(!L||!Rg||!L.pts||!Rg.pts||L.pts.length<2||Rg.pts.length<2)return '<div class="muted">序列长度不足（自系统首次运行起累积，早期缺口如实保留）</div>';
+  const n=Math.max(L.pts.length,Rg.pts.length),w=620,h=232,pl=46,pr=48,pt=12,pb=26;
+  const rng=a=>{let mn=Infinity,mx=-Infinity;a.pts.forEach(p=>{if(p.v!=null&&isFinite(p.v)){mn=Math.min(mn,p.v);mx=Math.max(mx,p.v)}});return[mn,mx]};
+  const l=rng(L),r=rng(Rg);
+  const lp=(l[1]-l[0])*.08||1,rp=(r[1]-r[0])*.08||1;
+  const L0=l[0]-lp,L1=l[1]+lp,R0=r[0]-rp,R1=r[1]+rp;
+  const X=i=>pl+i/(n-1)*(w-pl-pr);
+  const YL=v=>pt+(L1-v)/(L1-L0)*(h-pt-pb),YR=v=>pt+(R1-v)/(R1-R0)*(h-pt-pb);
+  let s="";
+  for(let t=0;t<=4;t++){const y=pt+t/4*(h-pt-pb);
+    s+='<line x1="'+pl+'" y1="'+y.toFixed(1)+'" x2="'+(w-pr)+'" y2="'+y.toFixed(1)+'" stroke="#f1f4f8"/>'+
+       '<text x="2" y="'+(y+3).toFixed(1)+'" font-size="9" fill="#b97a12">'+axv(L1-t/4*(L1-L0))+'</text>'+
+       '<text x="'+(w-pr+4)+'" y="'+(y+3).toFixed(1)+'" font-size="9" fill="#2563eb">'+axv(R1-t/4*(R1-R0))+'</text>';}
+  const poly=(se,Y)=>se.pts.map((p,i)=>p.v==null?null:X(i).toFixed(1)+","+Y(p.v).toFixed(1)).filter(Boolean).join(" ");
+  s+='<polyline points="'+poly(Rg,YR)+'" fill="none" stroke="#2563eb" stroke-width="1.7"/>';
+  s+='<polyline points="'+poly(L,YL)+'" fill="none" stroke="#b97a12" stroke-width="1.7"/>';
+  [0,Math.floor((n-1)/2),n-1].forEach(i=>{const d=(L.pts[i]||Rg.pts[i]||{}).d;if(d)s+='<text x="'+X(i).toFixed(1)+'" y="'+(h-7)+'" font-size="9" text-anchor="middle" fill="#94a3b8">'+d+'</text>';});
+  return svgWrap(w,h,s);
+}
+
+function heatMatrix(labels,m){
+  if(!labels||!labels.length||!m)return '<div class="muted">该数据源不可用，未做任何插值或虚构补齐</div>';
+  const n=labels.length,cell=42,pad=64,w=pad+cell*n,h=pad+cell*n+20;
+  let s="";
+  labels.forEach((la,j)=>{s+='<text x="'+(pad+j*cell+cell/2)+'" y="'+(pad-8)+'" font-size="9.5" fill="#5b6472" text-anchor="middle">'+esc(la)+'</text>';});
+  labels.forEach((la,i)=>{s+='<text x="'+(pad-6)+'" y="'+(pad+i*cell+cell/2+3)+'" font-size="9.5" fill="#5b6472" text-anchor="end">'+esc(la)+'</text>';});
+  for(let i=0;i<n;i++)for(let j=0;j<n;j++){
+    const v=(m[i]||[])[j];
+    const a=v==null?0:Math.min(.88,Math.abs(v)*.85+.06);
+    const col=v==null?"#f1f4f8":"rgba("+(v>=0?"212,60,60":"26,158,92")+","+a.toFixed(2)+")";
+    s+='<rect x="'+(pad+j*cell)+'" y="'+(pad+i*cell)+'" width="'+(cell-2)+'" height="'+(cell-2)+'" rx="3" fill="#fff"/>';
+    s+='<rect x="'+(pad+j*cell)+'" y="'+(pad+i*cell)+'" width="'+(cell-2)+'" height="'+(cell-2)+'" rx="3" fill="'+col+'"/>';
+    s+='<text x="'+(pad+j*cell+(cell-2)/2)+'" y="'+(pad+i*cell+(cell-2)/2+3)+'" font-size="9.5" text-anchor="middle" fill="'+(a>.5?"#fff":"#334155")+'">'+(v==null?"—":v.toFixed(2))+'</text>';
+  }
+  s+='<text x="2" y="'+(h-5)+'" font-size="9.5" fill="#94a3b8">红＝同向（趋近 1）　绿＝反向　色深＝相关性强弱；非因果、非预测</text>';
+  return svgWrap(w,h,s);
+}
+
+function donut(items,center,size){
+  size=size||150;
+  const tot=(items||[]).reduce((s,x)=>s+(x.v||0),0);
+  if(!tot)return '<div class="muted">该数据源不可用</div>';
+  const cx=size/2,cy=size/2,R=size/2-4,r=R*.58;
+  let s='<circle cx="'+cx+'" cy="'+cy+'" r="'+((R+r)/2).toFixed(1)+'" fill="none" stroke="#f1f4f8" stroke-width="'+(R-r).toFixed(1)+'"/>';
+  let a=-Math.PI/2;
+  items.forEach((it,i)=>{
+    const ang=(it.v||0)/tot*Math.PI*2;if(ang<=0)return;
+    const col=it.color||PAL[i%PAL.length];
+    if(ang>=Math.PI*1.999)s+='<circle cx="'+cx+'" cy="'+cy+'" r="'+((R+r)/2).toFixed(1)+'" fill="none" stroke="'+col+'" stroke-width="'+(R-r).toFixed(1)+'"/>';
+    else{
+      const a2=a+ang;
+      const x1=cx+R*Math.cos(a),y1=cy+R*Math.sin(a),x2=cx+R*Math.cos(a2),y2=cy+R*Math.sin(a2);
+      const x3=cx+r*Math.cos(a2),y3=cy+r*Math.sin(a2),x4=cx+r*Math.cos(a),y4=cy+r*Math.sin(a);
+      s+='<path d="M'+x1.toFixed(1)+','+y1.toFixed(1)+' A'+R+','+R+' 0 '+(ang>Math.PI?1:0)+' 1 '+x2.toFixed(1)+','+y2.toFixed(1)+
+         ' L'+x3.toFixed(1)+','+y3.toFixed(1)+' A'+r+','+r+' 0 '+(ang>Math.PI?1:0)+' 0 '+x4.toFixed(1)+','+y4.toFixed(1)+' Z" fill="'+col+'"/>';
+    }
+    a+=ang;
+  });
+  if(center)s+='<text x="'+cx+'" y="'+(cy+4)+'" font-size="12" text-anchor="middle" font-weight="700" fill="#1c2330">'+esc(center)+'</text>';
+  return svgWrap(size,size,s);
+}
+function donutLegend(items){
+  const tot=(items||[]).reduce((s,x)=>s+(x.v||0),0)||1;
+  return '<ul>'+items.map((it,i)=>'<li><span class="sw" style="background:'+(it.color||PAL[i%PAL.length])+'"></span>'+esc(it.label)+'　<span class="num">'+it.v+'</span>　<span class="muted">'+(it.v/tot*100).toFixed(1)+'%</span></li>').join("")+'</ul>';
+}
+function heatTiles(items,isCount){
+  if(!items||!items.length)return '<div class="muted">板块数据不可用（已挂起 E9），未做任何插值或虚构补齐</div>';
+  const mx=Math.max(1,...items.map(x=>Math.abs(x.v||0)));
+  return items.map(s=>{
+    const v=s.v||0,t=Math.abs(v)/mx;
+    const col=isCount?'rgba(124,58,237,'+(.12+.72*t).toFixed(2)+')':(v>=0?'rgba(212,60,60,'+(.10+.72*t).toFixed(2)+')':'rgba(26,158,92,'+(.10+.72*t).toFixed(2)+')');
+    return '<div class="tile" style="background:'+col+'"><div class="nm">'+esc(s.name)+'</div><div class="vl">'+(isCount?esc(s.v)+' 家':'<span class="'+cls(v)+'">'+pct(v)+'</span>')+'</div></div>';
+  }).join("");
+}
+
+/* ================= 可视化页 ================= */
+function setHTML(id,html){const el=document.getElementById(id);if(el)el.innerHTML=html==null?"":html;}
+function renderViz(){
+  const C=(S&&S.charts)||{},cal=C.caliber||{},d=(S&&S.derived)||{};
+
+  /* 1 雷达 */
+  const rd=C.radar||[];
+  setHTML("vizRadar",radarChart(rd));
+  setHTML("vizRadarList",rd.map(r=>
+    '<div style="margin:8px 0"><div style="display:flex;justify-content:space-between;font-size:12.5px"><span>'+esc(r.k)+'</span>'+
+    (r.v==null?'<span class="badge b-err">数据不可用</span>':'<span class="num">'+esc(r.raw)+'　<b>'+r.v.toFixed(0)+'</b></span>')+'</div>'+
+    '<div class="bar"><i style="left:0;width:'+(r.v==null?0:Math.max(0,Math.min(100,r.v)))+'%"></i></div>'+
+    '<div class="muted" style="font-size:11px">'+esc(r.sub||"")+' · '+esc(r.polarity||"")+'</div></div>').join(""));
+  setHTML("vizRadarNote","<b>口径</b>："+esc(cal.radar||"")+"。共 "+rd.filter(x=>x.v!=null).length+"/"+rd.length+" 个维度有数据；<b>不可用维度按 0 绘制</b>，并在右侧列表标注「数据不可用」，未做估算填补。<b>归一化只用于同图比较，不代表好坏，也不是涨跌信号。</b>");
+
+  /* 2 涨跌幅分布 */
+  const bd=C.breadthDist;
+  const tot=bd?bd.reduce((s,x)=>s+x.n,0):0;
+  setHTML("vizBreadth",bd?barChart(bd.map(x=>({label:x.label,v:x.n,color:x.color,text:x.n+(tot?"（"+(x.n/tot*100).toFixed(1)+"%）":"")}))):'<div class="muted">宽度数据源不可用，未做任何插值或虚构补齐</div>');
+  setHTML("vizBreadthNote","<b>口径</b>：全A（沪深京）当日涨跌幅分档计数（来源：市场宽度接口）。共 "+(tot||"—")+" 只；上涨占比 "+(d.upRatio==null?"—":d.upRatio.toFixed(1)+"%")+"，净上涨占比 "+(d.netRatio==null?"—":d.netRatio.toFixed(1)+"%")+"。红色＝上涨档、绿色＝下跌档，仅表示方向。");
+
+  /* 3 归一化对比 */
+  const nm=(C.norm||[]).map((se,i)=>({name:se.name,color:PAL[i%PAL.length],pts:se.pts}));
+  setHTML("vizNorm",multiLine(nm));
+  setHTML("vizNormLg",nm.map(s=>'<span><i style="background:'+s.color+'"></i>'+esc(s.name)+'</span>').join(""));
+  setHTML("vizNormNote","<b>口径</b>："+esc(cal.norm||"")+"。末值："+nm.map(s=>esc(s.name)+" "+fmt(s.pts[s.pts.length-1].v,1)).join("、")+"。仅比较相对强弱，<b>不代表未来表现</b>。");
+
+  /* 4 相关性 */
+  setHTML("vizCorr",C.corr?heatMatrix(C.corr.labels,C.corr.m):'<div class="muted">该数据源不可用，未做任何插值或虚构补齐</div>');
+  setHTML("vizCorrNote","<b>口径</b>："+esc(cal.corr||"")+"。相关性高说明指数间同向波动程度高，<b>只描述历史共同波动，不构成因果或预测</b>。");
+
+  /* 5 风格轮动 */
+  const ss=C.styleSeries||[];
+  setHTML("vizStyle",ss.length>1?multiLine([
+    {name:"中证500/沪深300",color:"#7c3aed",pts:ss.map(x=>({d:x.d,v:x.rs}))},
+    {name:"创业板指/上证",color:"#0891b2",pts:ss.map(x=>({d:x.d,v:x.rg}))}
+  ],{zeroLine:true}):'<div class="muted">序列长度不足（需至少 41 个交易日）</div>');
+  const lastS=ss[ss.length-1]||{};
+  setHTML("vizStyleNote","<b>口径</b>："+esc(cal.style||"")+"。最新值：大小盘 "+(lastS.rs==null?"—":pct(lastS.rs,2))+"、成长-价值 "+(lastS.rg==null?"—":pct(lastS.rg,2))+"（正值＝前者相对占优）。与证据 E5/E6 同源。");
+
+  /* 6 两融 vs 上证 */
+  const mi=C.marginIdx||[];
+  setHTML("vizMargin",dualLine(
+    {name:"两融余额",pts:mi.map(x=>({d:x.d,v:x.margin}))},
+    {name:"上证指数",pts:mi.map(x=>({d:x.d,v:x.close}))}));
+  setHTML("vizMarginNote","<b>口径</b>：两融余额为交易所 T-1 披露值（单位：亿元），与上证指数按<b>同一日期</b>对齐后绘制；未对齐的日期直接丢弃，不做插值。仅展示杠杆资金与指数的历史同步关系，<b>不构成因果判断</b>。样本 "+mi.length+" 个交易日。");
+
+  /* 7 量能 */
+  const amt=C.amt||[],ah=C.amtHist||[];
+  setHTML("vizAmtLine",amt.length>1?multiLine([{name:C.amtMetric,color:"#2563eb",pts:amt.map(x=>({d:x.d,v:x.v}))}]):'<div class="muted">该数据源不可用</div>');
+  const curAmt=d.amtNow;
+  const curBin=ah.findIndex(b=>curAmt!=null&&curAmt>=b.lo&&curAmt<b.hi);
+  setHTML("vizAmtHist",ah.length?barChart(ah.map((b,i)=>({label:Math.round(b.lo),v:b.n,color:i===curBin?"#2563eb":"#b9cdf5",text:b.n||""})),{h:170,showVal:false}):'<div class="muted">该数据源不可用</div>');
+  setHTML("vizAmtNote","<b>口径</b>："+esc(cal.amt||"")+"。上图为近 120 个交易日走势；下图为近 250 个交易日的分布（横轴＝"+esc(C.amtMetric)+"区间下沿 "+esc(C.amtUnit||"")+"，纵轴＝落入该区间的交易日数）"+(curBin>=0?("，<b>蓝柱为当日所在区间</b>（当日 "+fmt(curAmt,0)+" "+esc(C.amtUnit||"")+"）"):"")+"。当前量能分位 "+(d.amtPctile==null?"—":d.amtPctile.toFixed(0)+"%")+"（E11）。");
+
+  /* 8 日收益分布 */
+  const rh=C.retHist||[];
+  setHTML("vizRet",rh.length?barChart(rh.map(b=>({label:b.lo.toFixed(1),v:b.n,color:b.hi<=0?"#1a9e5c":(b.lo>=0?"#d43c3c":"#cbd5e1"),text:b.n||""})),{h:200,showVal:false}):'<div class="muted">该数据源不可用</div>');
+  const totR=rh.reduce((s,b)=>s+b.n,0)||1;
+  const tail=rh.filter(b=>Math.abs(b.lo)>=3||Math.abs(b.hi)>=3).reduce((s,b)=>s+b.n,0);
+  setHTML("vizRetNote","<b>口径</b>："+esc(cal.retHist||"")+"。样本 "+totR+" 个交易日；日涨跌幅绝对值≥3% 的交易日占比 "+(tail/totR*100).toFixed(1)+"%。当前 20 日年化波动率 "+(d.vol==null?"—":d.vol.toFixed(1)+"%")+"（E12）。分布仅描述波动结构，<b>不预测未来波动</b>。");
+
+  /* 9 估值标尺 */
+  const vr=C.valRuler||[];
+  setHTML("vizVal",vr.length?vr.map(v=>
+    '<div style="margin:14px 0"><div style="display:flex;justify-content:space-between;font-size:12.5px;flex-wrap:wrap"><span><b>'+esc(v.name)+'</b></span>'+
+    '<span class="num">PE '+fmt(v.pe,2)+'（分位 '+fmt(v.peP,1)+'%）· PB '+fmt(v.pb,2)+'（分位 '+fmt(v.pbP,1)+'%）</span></div>'+
+    '<div class="ruler"><div class="tick" style="left:25%"></div><div class="tick" style="left:50%"></div><div class="tick" style="left:75%"></div>'+
+    '<i style="left:calc('+v.peP+'% - 2px)"></i><i style="left:calc('+v.pbP+'% - 2px);background:#2563eb"></i></div>'+
+    '<div class="muted" style="font-size:11px;display:flex;justify-content:space-between"><span>0%（历史最低区间）</span><span>■ PE 分位　■ PB 分位</span><span>100%（历史最高区间）</span></div></div>').join("")
+    :'<div class="muted">估值数据源不可用（已挂起 E7），未做任何插值或虚构补齐</div>');
+  setHTML("vizValNote","<b>口径</b>：TTM 市盈率/市净率及其在该指数自身历史区间中的分位（蛋卷指数估值口径）。分位描述的是<b>当前位置</b>，<b>不包含对未来涨跌的判断</b>；不同指数的历史区间长度不同，横向比较需谨慎。");
+
+  /* 10 涨跌停与连板 */
+  const zs=C.ztStruct;
+  setHTML("vizZT",zs?barChart(zs.map(x=>({label:x.label,v:x.v,color:x.color,text:x.v+" 家"})),{h:170}):'<div class="muted">涨跌停数据源不可用</div>');
+  const ztC=(zs&&zs[0]&&zs[0].v)||0,zbC=(zs&&zs[2]&&zs[2].v)||0;
+  const br=d.brokenRate;
+  setHTML("vizZTDonut",(zs&&(ztC+zbC))?(donut([{label:"封板（涨停）",v:ztC,color:"#d43c3c"},{label:"炸板",v:zbC,color:"#b97a12"}],(br==null?"—":br.toFixed(0)+"%"))+donutLegend([{label:"封板（涨停）",v:ztC,color:"#d43c3c"},{label:"炸板",v:zbC,color:"#b97a12"}])):'<div class="muted">涨停池数据源不可用</div>');
+  const ld=(S.extras&&S.extras.ladder)||[];
+  setHTML("vizLadder",ld.length?barChart(ld.map(x=>({label:x.level+"板",v:x.count,color:"#7c3aed",text:x.count+" 家"})),{h:160}):'<div class="muted">涨停池数据源不可用</div>');
+  setHTML("vizZTNote","<b>口径</b>：涨停/跌停/炸板来自涨停池与跌停池接口；炸板率＝炸板 ÷（涨停＋炸板）。连板高度为池内最高连板数（当前 "+(d.maxLB==null?"—":d.maxLB+" 板")+"）。以上均为当日交易结构统计，<b>不预测次日情绪</b>（E3）。");
+
+  /* 11 板块热力 */
+  const sh=C.secHeat||[],sa=C.secHeatAlt||[];
+  setHTML("vizSectorHeat",sh.length?heatTiles(sh,false):(sa.length?heatTiles(sa,true):'<div class="muted">板块数据源不可用（已挂起 E9），未做任何插值或虚构补齐</div>'));
+  setHTML("vizSectorNote",sh.length?("<b>口径</b>：行业板块当日涨跌幅（共 "+sh.length+" 个板块）；色深＝涨跌幅绝对值大小，红涨绿跌。仅描述当日结构分化（E9）。")
+    :(sa.length?"<b>替代口径</b>：板块接口不可用，改用<b>涨停池个股所属行业分布</b>（计数，单位：家），口径变化已在界面标注。":""));
+
+  /* 12 新闻分布 */
+  const st=(NEWS&&NEWS.stats)||(S&&S.newsStats)||{};
+  const byHour=st.byHour||{},hours=Object.keys(byHour).sort();
+  setHTML("vizNewsHour",hours.length?barChart(hours.map(h=>({label:h+"时",v:byHour[h],color:"#0891b2",text:byHour[h]||""})),{h:190,showVal:false}):'<div class="muted">当日暂无归档新闻</div>');
+  const peak=hours.length?hours.reduce((a,b)=>byHour[a]>=byHour[b]?a:b):null;
+  setHTML("vizNewsHourNote","<b>口径</b>：按快讯发布时间的小时统计（当日归档 "+(st.total||0)+" 条）"+(peak?("，峰值在 "+peak+" 时（"+byHour[peak]+" 条）"):"")+"。仅反映信息发布节奏，<b>不代表重要性与市场影响</b>。");
+  const byCat=st.byCat||{},cats=Object.keys(byCat);
+  const cItems=cats.map((c,i)=>({label:c,v:byCat[c],color:PAL[i%PAL.length]})).sort((a,b)=>b.v-a.v);
+  setHTML("vizNewsCat",cItems.length?(donut(cItems,(st.total||0)+" 条")+donutLegend(cItems)):'<div class="muted">当日暂无归档新闻</div>');
+  setHTML("vizNewsCatNote","<b>口径</b>：分类由<b>关键词规则自动标注（归纳）</b>，可能存在归类偏差，未命中词表的归入「其他」、不强行归类；新闻仅作事件背景，<b>不构成任何投资建议</b>（E10）。");
+
+  /* 13 宽度趋势 */
+  const hist=(S&&S.history||[]).filter(x=>x.upRatio!=null&&x.close!=null);
+  setHTML("vizBreadthTrend",dualLine(
+    {name:"上涨占比",pts:hist.map(x=>({d:x.date,v:x.upRatio}))},
+    {name:"上证收盘",pts:hist.map(x=>({d:x.date,v:x.close}))}));
+  setHTML("vizBreadthTrendNote","<b>口径</b>：上涨占比（左轴·%）与上证指数收盘价（右轴·点）的日频对照，序列<b>自系统首次运行起累积</b>，早期缺口如实保留、不做插值；当前样本 "+hist.length+" 个交易日。用于观察宽度与指数的同步/背离，<b>不预测后续方向</b>。");
+}
+
+function renderAll(){renderHeader();renderOverview();renderViz();renderSectors();renderEvidence();renderDrill();renderHealth()}
+
+function renderHeader(){
+  const d=(S.evidence||[]).filter(e=>e.disabled).length;
+  document.getElementById("hdDot").className="dot "+(d?"err":"live");
+  document.getElementById("hdMode").textContent=d?("真实数据 · "+d+"项证据不可用"):"真实数据 · 运行中";
+  document.getElementById("hdDate").textContent=S.asOfLabel||S.asOf;
+  document.getElementById("hdPhase").textContent=(S.marketStatus&&S.marketStatus.label)||"";
+}
+
+function renderOverview(){
+  const st=S.state;
+  document.getElementById("stateBox").className="state-box "+(st.cls||"st-0");
+  document.getElementById("stateBox").innerHTML=
+    '<div class="mini" style="opacity:.8">当前市场状态研判（推断）</div><div class="name">'+st.name+'</div>'+
+    '<div class="mini" style="opacity:.92">'+st.desc+'</div>'+
+    '<div style="margin-top:8px"><div class="mini" style="display:flex;justify-content:space-between;opacity:.85"><span>置信度（证据一致度）</span><span>'+Math.round(st.conf*100)+'%</span></div>'+
+    '<div class="conf-bar"><i style="width:'+(st.conf*100)+'%"></i></div></div>'+
+    '<div class="mini" style="opacity:.75">支持 '+st.pos+' · 制约 '+st.neg+' · 数据不可用 '+st.unknown+'</div>';
+
+  const th=(S.extras&&S.extras.thermometer)||{};
+  document.getElementById("thermoBox").innerHTML= th.score==null?'<div class="muted">分项数据不足</div>':
+    '<div class="thermo"><i style="left:calc('+th.score+'% - 2px)"></i></div>'+
+    '<div style="display:flex;justify-content:space-between"><b class="num" style="font-size:18px">'+th.score+'</b><span class="muted">0 冷 — 100 热</span></div>'+
+    '<div class="muted" style="margin-top:6px">'+esc(th.caliber)+'</div>';
+
+  const d=S.derived||{};const tension=[];
+  if(d.RG&&d.RG.now>0&&d.upRatio>65)tension.push("成长风格占优（E6）与市场宽度过热（E2）并存，需验证持续性");
+  if(d.amtRatio>1&&d.brokenRate>35)tension.push("量能放大（E4）与炸板率偏高（E3）反映分歧加大");
+  if(d.RG&&d.RG.now>0&&d.upRatio<45)tension.push("指数风格偏成长（E6）但宽度偏弱（E2），赚钱效应集中");
+  if(!tension.length)tension.push("各维度证据方向未见显著冲突，主要矛盾集中在触发条件的验证");
+  document.getElementById("stateMeta").innerHTML=
+    '<b>研判对象</b><span>A股宽基指数（上证/沪深300/中证500/创业板指/科创50/深证成指）</span>'+
+    '<b>数据时点</b><span class="mono">'+(S.asOfLabel||S.asOf)+'（真实行情）</span>'+
+    '<b>主要矛盾</b><span>'+tension.join("；")+'</span>'+
+    '<b>研判性质</b><span>归纳性状态描述 + 可证伪触发条件，<b>非涨跌预测</b></span>'+
+    '<b>取数触发</b><span>'+(S.trigger||"-")+' · '+new Date(S.fetchedAt).toLocaleString("zh-CN")+'</span>';
+
+  const sh=(S.series&&S.series.sh)||[];
+  document.getElementById("chartRange").textContent=sh.length?"（"+sh[0].d+" ~ "+sh[sh.length-1].d+" · 真实日K）":"";
+  document.getElementById("mainChart").innerHTML=sh.length>1?lineChart(sh):'<div class="muted">数据加载中</div>';
+  document.getElementById("lgEnd").textContent=sh.length?"期末收盘 "+fmt(sh[sh.length-1].c,2):"";
+
+  const names={sh:"上证指数",hs300:"沪深300",zz500:"中证500",cyb:"创业板指",kc50:"科创50",sz:"深证成指"};
+  document.getElementById("idxStrip").innerHTML=Object.keys(S.quotes||{}).map(k=>{
+    const q=S.quotes[k];const s=(S.series&&S.series[k])?S.series[k].map(x=>x.c):[];const c=q.chgPct;
+    return '<div class="card"><div class="mini muted">'+esc(q.name||names[k]||k)+'</div>'+
+      '<div class="big" style="font-size:17px">'+fmt(q.price,2)+'</div>'+
+      '<div class="num '+cls(c)+' mini">'+pct(c)+'（当日）</div>'+
+      '<div style="margin-top:6px">'+spark(s,c>=0?"#d43c3c":"#1a9e5c",220,36)+'</div></div>';}).join("");
+
+  const nl=(S.news||[]).slice(0,5);
+  document.getElementById("newsCountTag").textContent="今日已归档 "+((S.newsStats&&S.newsStats.total)||0)+" 条";
+  document.getElementById("topNews").innerHTML=nl.length?nl.map(n=>
+    '<div style="padding:6px 0;border-bottom:1px solid #f1f4f8">'+
+    '<div class="tl-time">'+esc(n.time)+(n.level==="high"?' <span class="badge b-err">重要</span>':'')+' <span class="tagchip" style="cursor:default">'+esc(n.categoryName)+'</span></div>'+
+    '<div class="mini" style="font-weight:600;margin-top:2px">'+esc(n.title)+'</div></div>').join("")
+    :'<div class="muted">暂无新闻（数据源可能不可用）</div>';
+
+  document.getElementById("signalList").innerHTML=(S.signals||[]).map(s=>
+    '<div class="hrow"><span style="width:76px;font-weight:600">'+s.name+'</span>'+
+    (s.ok?'<span class="badge '+(s.hit?(s.sgn>0?"b-ok":"b-warn"):"b-fact")+'">'+(s.hit?(s.sgn>0?"支持":"制约"):"未触发")+'</span>':'<span class="badge b-err">数据不可用</span>')+
+    '<span class="muted">'+esc(s.note)+'</span></div>').join("");
+
+  document.getElementById("conclList").innerHTML=(S.conclusions||[]).map(c=>
+    '<div class="concl"><div class="ct">'+badge(c.type)+' '+esc(c.t)+' <span class="badge b-warn">置信度 '+Math.round(c.conf*100)+'%</span></div>'+
+    '<div class="cev">支撑证据：'+c.evs.map(id=>'<span class="ev-ref" onclick="showEv(\''+id+'\')">'+id+'</span>').join("")+'</div>'+
+    (c.note?'<div class="cev" style="margin-top:4px">'+esc(c.note)+'</div>':'')+'</div>').join("");
+
+  document.getElementById("triggerTable").innerHTML='<tr><th>触发条件（判断被推翻/更新的情形）</th><th>当前值</th><th>切换至</th><th>状态</th></tr>'+
+    (S.triggers||[]).map(t=>'<tr><td>'+t.cond+'</td><td class="num">'+t.cur+'</td><td>'+t.to+'</td><td>'+(t.near?'<span class="badge b-warn">接近触发</span>':'<span class="muted">—</span>')+'</td></tr>').join("");
+
+  document.getElementById("traceBox").innerHTML='<ol>'+(S.plan||[]).map(p=>'<li>'+esc(p.desc)+'：<code>'+esc(p.detail)+'</code></li>').join("")+'</ol>';
+}
+
+/* ---------- 板块与情绪 ---------- */
+function renderSectors(){
+  const sec=(S.sectors||[])||[];
+  const C=(S&&S.charts)||{};
+  const sh=C.secHeat||[], sa=C.secHeatAlt||[];
+  setHTML("sectorHeatTop",sh.length?heatTiles(sh,false):(sa.length?heatTiles(sa,true):'<div class="muted">板块数据不可用（已挂起 E9）</div>'));
+  const maxAbs=Math.max(1,...sec.map(s=>Math.abs(s.chgPct||0)));
+  document.getElementById("sectorList").innerHTML=sec.length?sec.map((s,i)=>
+    '<div style="padding:6px 0;border-bottom:1px solid #f1f4f8">'+
+    '<div style="display:flex;justify-content:space-between;font-size:12.5px"><span>'+(i+1)+'. '+esc(s.name)+'</span>'+
+    '<span class="num '+cls(s.chgPct)+'">'+(s.chgPct==null?'—':pct(s.chgPct))+'</span></div>'+
+    '<div class="bar" style="margin-top:4px"><i class="'+(s.chgPct<0?"neg":"")+'" style="left:'+(s.chgPct>=0?50:50-Math.abs(s.chgPct)/maxAbs*50)+'%;width:'+Math.abs(s.chgPct)/maxAbs*50+'%"></i></div>'+
+    '<div class="muted" style="font-size:11px">'+(s.upNum!=null?('板块内上涨 '+s.upNum+' / 下跌 '+s.downNum):'')+(s.leader?(' · 领涨 '+esc(s.leader)+' '+pct(s.leaderChg)):'')+'</div></div>').join("")
+    :'<div class="muted">板块数据不可用（已挂起 E9）</div>';
+
+  const ld=(S.extras&&S.extras.ladder)||[];
+  const maxL=Math.max(1,...ld.map(x=>x.count));
+  document.getElementById("ladder").innerHTML=ld.length?ld.map(x=>
+    '<div style="display:flex;align-items:center;gap:10px;margin:6px 0"><span style="width:52px;font-size:12px">'+x.level+'板</span>'+
+    '<div class="bar" style="flex:1"><i style="left:0;width:'+(x.count/maxL*100)+'%;background:#7c3aed"></i></div>'+
+    '<span class="num" style="width:38px;text-align:right">'+x.count+'家</span></div>').join("")
+    :'<div class="muted">涨停池数据不可用</div>';
+
+  const th=(S.extras&&S.extras.thermometer)||{};
+  document.getElementById("thermoParts").innerHTML=(th.parts||[]).map(p=>
+    '<div style="margin:8px 0"><div style="display:flex;justify-content:space-between;font-size:12.5px"><span>'+p.k+'</span><span class="num">'+p.raw+'</span></div>'+
+    '<div class="bar"><i style="left:0;width:'+(p.v==null?0:p.v)+'%"></i></div></div>').join("");
+  document.getElementById("thermoCal").textContent=th.caliber||"";
+
+  const e2=(S.evidence||[]).find(e=>e.id==="E2");
+  document.getElementById("distBox").innerHTML=e2&&!e2.disabled?
+    '<div class="mini">'+esc(e2.text)+'</div><div class="muted" style="margin-top:6px">口径：'+esc(e2.caliber)+'</div>'
+    :'<div class="muted">宽度数据不可用</div>';
+}
+
+/* ---------- 证据 ---------- */
+function renderEvidence(){
+  document.getElementById("evGrid").innerHTML=(S.evidence||[]).map(e=>
+    '<div class="card" style="'+(e.disabled?"border-color:#f5c2c2;background:#fffafa":"")+'">'+
+    '<h3>'+e.id+' · '+esc(e.name)+' '+badge(e.type)+(e.stale?' <span class="badge b-warn">已回退上次成功值</span>':'')+'</h3>'+
+    (e.disabled?'<div class="err-banner" style="margin-bottom:8px">⚠ 该数据源当前不可用，证据已挂起；相关结论置信度已下调。</div>'
+      :(e.stale?'<div class="err-banner" style="margin-bottom:8px">⚠ '+esc(e.staleNote)+'</div>':'')+
+       '<div class="big" style="font-size:18px">'+esc(e.value)+'<span class="mini muted" style="font-weight:400;margin-left:6px">'+esc(e.unit)+'</span></div>'+
+       '<p class="mini" style="margin-top:8px">'+esc(e.text)+'</p>')+
+    '<div class="ev-meta"><b>来源</b> '+esc(e.source)+'　<b>时点</b> <span class="mono">'+e.asOf+'</span><br><b>单位</b> '+esc(e.unit)+'　<b>口径</b> '+esc(e.caliber)+'</div></div>').join("");
+}
+
+/* ---------- 新闻 ---------- */
+async function initNewsDates(){
+  const sel=document.getElementById("newsDate");
+  const dates=(S.newsDates&&S.newsDates.length)?S.newsDates:[S.asOf];
+  sel.innerHTML=dates.slice().reverse().map(d=>'<option value="'+d+'">'+d+'</option>').join("");
+  document.getElementById("catChips").innerHTML=CATS.map(c=>'<span class="tagchip" data-c="'+c[0]+'" onclick="setCat(\''+c[0]+'\')">'+c[1]+'</span>').join("");
+  loadNews();
+}
+function setCat(c){curCat=c;[...document.querySelectorAll("#catChips .tagchip")].forEach(el=>el.classList.toggle("on",el.dataset.c===c));loadNews();}
+let tmr=null;function debouncedNews(){clearTimeout(tmr);tmr=setTimeout(loadNews,350);}
+async function loadNews(){
+  const date=document.getElementById("newsDate").value||S.asOf;
+  const q=encodeURIComponent((document.getElementById("newsQ").value||"").trim());
+  let u="/api/news?date="+date+"&limit=300";
+  if(q)u+="&q="+q; if(curCat)u+="&cat="+curCat;
+  try{ NEWS=await api(u); }catch(e){ document.getElementById("newsList").innerHTML='<div class="err-banner">新闻加载失败：'+e.message+'</div>';return; }
+  const it=NEWS.items||[], st=NEWS.stats||{};
+  document.getElementById("newsMeta").textContent="筛选出 "+it.length+" 条（当日归档 "+st.total+" 条）";
+  const byH=st.byHour||{}, hrs=Object.keys(byH).sort();
+  setHTML("newsHourChart",hrs.length?barChart(hrs.map(h=>({label:h+"时",v:byH[h],color:"#0891b2",text:byH[h]||""})),{h:180,showVal:false}):'<div class="muted">当日暂无归档新闻</div>');
+  const cs=Object.keys(st.byCat||{}).map((c,i)=>({label:c,v:st.byCat[c],color:PAL[i%PAL.length]})).sort((a,b)=>b.v-a.v);
+  setHTML("newsCatChart",cs.length?(donut(cs,(st.total||0)+" 条",130)+donutLegend(cs)):'<div class="muted">当日暂无归档新闻</div>');
+  document.getElementById("newsStats").innerHTML=
+    '<div class="card"><div class="mini muted">当日归档</div><div class="big" style="font-size:18px">'+st.total+' 条</div></div>'+
+    '<div class="card"><div class="mini muted">重要度=高</div><div class="big" style="font-size:18px">'+(st.highCount||0)+' 条</div></div>'+
+    '<div class="card"><div class="mini muted">覆盖分类</div><div class="big" style="font-size:18px">'+Object.keys(st.byCat||{}).length+' 类</div></div>'+
+    '<div class="card"><div class="mini muted">最新一条</div><div class="big" style="font-size:14px">'+((it[0]&&it[0].time)||"—")+'</div></div>';
+  document.getElementById("newsList").innerHTML=it.length?it.map(n=>
+    '<div class="tl-item'+(n.level==="high"?" high":"")+'">'+
+    '<div class="tl-time">'+esc(n.time)+(n.level==="high"?' <span class="badge b-err">重要</span>':(n.level==="mid"?' <span class="badge b-warn">关注</span>':''))+' · '+esc(n.categoryName)+'</div>'+
+    '<div class="tl-title">'+esc(n.title)+'</div>'+
+    (n.summary?'<div class="tl-sum">'+esc(n.summary)+'</div>':'')+
+    ((n.stocks&&n.stocks.length)?'<div class="tl-sum muted">相关标的（事件关联，非推荐）：'+n.stocks.map(esc).join("、")+'</div>':'')+
+    '</div>').join(""):'<div class="muted">该日暂无新闻或筛选无结果</div>';
+  document.getElementById("hotWords").innerHTML=(st.hot||[]).map(h=>
+    '<span class="tagchip">'+esc(h.w)+' · '+h.n+'</span>').join("")||'<div class="muted">暂无</div>';
+  const byCat=st.byCat||{};const mx=Math.max(1,...Object.values(byCat));
+  document.getElementById("catDist").innerHTML=CATS.map(c=>{
+    const v=byCat[c[1]]||0;
+    return '<div style="margin:6px 0"><div style="display:flex;justify-content:space-between;font-size:12.5px"><span>'+c[1]+'</span><span class="num">'+v+'</span></div>'+
+      '<div class="bar"><i style="left:0;width:'+(v/mx*100)+'%;background:#2563eb"></i></div></div>';}).join("");
+}
+
+/* ---------- 复盘 ---------- */
+async function initReplayDates(){
+  try{ const d=await api("/api/replay/dates"); REPLAY_DATES=d.dates||[]; }catch(e){ REPLAY_DATES=[]; }
+  const sel=document.getElementById("replayDate");
+  sel.innerHTML=REPLAY_DATES.slice().reverse().map(d=>'<option value="'+d+'">'+d+'</option>').join("");
+  if(REPLAY_DATES.length)loadReplay();
+  loadStateLog();
+}
+async function loadReplay(){
+  const d=document.getElementById("replayDate").value;if(!d)return;
+  try{ REPLAY=await api("/api/replay?date="+d); }catch(e){ document.getElementById("replayBox").innerHTML='<div class="err-banner">加载失败</div>';return; }
+  if(REPLAY.error){ document.getElementById("replayBox").innerHTML='<div class="muted">'+esc(REPLAY.error)+'</div>';return; }
+  document.getElementById("replayMeta").textContent="共 "+REPLAY_DATES.length+" 个交易日快照";
+  document.getElementById("replayBox").innerHTML=
+    '<div class="grid g3">'+
+    '<div class="card"><div class="mini muted">当日状态</div><div class="big" style="font-size:18px">'+esc(REPLAY.state.name)+'</div><div class="muted">置信度 '+Math.round(REPLAY.state.conf*100)+'%</div></div>'+
+    '<div class="card"><div class="mini muted">支持/制约/不可用</div><div class="big" style="font-size:18px">'+REPLAY.state.pos+' / '+REPLAY.state.neg+' / '+REPLAY.state.unknown+'</div></div>'+
+    '<div class="card"><div class="mini muted">当日新闻归档</div><div class="big" style="font-size:18px">'+(REPLAY.newsCount||0)+' 条</div></div></div>'+
+    '<div style="margin-top:12px"><b class="mini">当日核心结论</b>'+(REPLAY.conclusions||[]).map(c=>'<div class="concl"><div class="ct">'+badge(c.type)+' '+esc(c.t)+'</div></div>').join("")+'</div>'+
+    '<div style="margin-top:12px"><b class="mini">当日关键证据</b><div class="grid g3" style="margin-top:6px">'+
+    (REPLAY.evidence||[]).map(e=>'<div class="card"><div class="mini muted">'+e.id+' '+esc(e.name)+'</div><div class="num">'+esc(e.value)+' '+esc(e.unit)+'</div></div>').join("")+'</div></div>';
+}
+async function loadStateLog(){
+  try{ const d=await api("/api/state-log"); STATE_LOG=d.items||[]; }catch(e){ STATE_LOG=[]; }
+  document.getElementById("stateTimeline").innerHTML=STATE_LOG.length?STATE_LOG.slice().reverse().map(s=>
+    '<div class="hrow"><span class="mono" style="width:150px">'+new Date(s.ts).toLocaleString("zh-CN")+'</span>'+
+    '<span class="badge b-fact">'+esc(s.from)+'</span><span>→</span><span class="badge b-infer">'+esc(s.to)+'</span>'+
+    '<span class="muted">数据时点 '+s.asOf+' · 置信度 '+Math.round(s.conf*100)+'%</span></div>').join("")
+    :'<div class="muted">暂无状态切换记录（状态未发生变化时不记录）</div>';
+}
+
+/* ---------- 钻取 ---------- */
+let drillMode="style";
+function renderDrill(){
+  const box=document.getElementById("drillPick");
+  if(drillMode==="style"){
+    box.innerHTML='<b class="mini">选择风格：</b><div class="seg" style="margin:8px 0 0">'+
+      ["成长/成长风格","价值/权重风格","中小盘","大盘权重"].map((s,i)=>'<button class="'+(i===0?"on":"")+'" onclick="pick(this,\'style\','+i+')">'+s+'</button>').join("")+'</div>';
+    drillStyle(0);
+  }else if(drillMode==="sector"){
+    const sec=(S.sectors||[]).slice(0,12);
+    box.innerHTML='<b class="mini">选择行业板块（真实数据 · 当日涨幅排序）：</b><div class="seg" style="margin:8px 0 0">'+
+      sec.map((s,i)=>'<button class="'+(i===0?"on":"")+'" onclick="pick(this,\'sector\','+i+')">'+esc(s.name)+'</button>').join("")+'</div>';
+    drillSector(0);
+  }else{
+    box.innerHTML='<b class="mini">选择风险变量：</b><div class="seg" style="margin:8px 0 0">'+
+      ["市场宽度恶化","量能与杠杆收缩","情绪过热后分歧","估值约束"].map((s,i)=>'<button class="'+(i===0?"on":"")+'" onclick="pick(this,\'risk\','+i+')">'+s+'</button>').join("")+'</div>';
+    drillRisk(0);
+  }
+}
+function pick(btn,mode,i){[...btn.parentElement.children].forEach(b=>b.classList.remove("on"));btn.classList.add("on");
+  if(mode==="style")drillStyle(i);else if(mode==="sector")drillSector(i);else drillRisk(i);}
+function drillStyle(i){
+  const d=S.derived||{};const ev=S.evidence||[];
+  const g=(d.RG&&d.RG.now>0),s=(d.RS&&d.RS.now>0);
+  const map=[["成长/成长风格",g,"E6"],["价值/权重风格",!g,"E6"],["中小盘",s,"E5"],["大盘权重",!s,"E5"]];
+  const [name,strong,eid]=map[i];const e=ev.find(x=>x.id===eid);
+  document.getElementById("drillOut").innerHTML='<div class="card"><h3>'+name+' · 子研判（真实数据）</h3>'+
+    '<div class="concl"><div class="ct">'+badge("infer")+' 相对强弱：'+(strong?"该方向近20日相对占优":"该方向近20日相对落后")+'</div>'+
+    '<div class="cev">支撑证据：<span class="ev-ref" onclick="showEv(\''+eid+'\')">'+eid+'</span>'+(e?'　'+esc(e.value):'')+'</div></div>'+
+    '<div class="concl"><div class="ct">'+badge("fact")+' 估值位置</div><div class="cev">支撑证据：<span class="ev-ref" onclick="showEv(\'E7\')">E7</span>　口径：TTM市盈率与历史分位</div></div>'+
+    '<div class="concl"><div class="ct">'+badge("unc")+' 不确定性：风格延续性无法保证；若总览页对应触发条件成立（对数强弱转负），本子研判需重新评估</div>'+
+    '<div class="cev">本子研判不构成对该风格任何品种的买卖建议。</div></div></div>';
+}
+function drillSector(i){
+  const s=(S.sectors||[])[i];if(!s){document.getElementById("drillOut").innerHTML='<div class="muted">板块数据不可用</div>';return}
+  const rank=(S.sectors||[]).findIndex(x=>x.code===s.code)+1;
+  document.getElementById("drillOut").innerHTML='<div class="card"><h3>'+esc(s.name)+'（'+esc(s.code)+'）· 子研判</h3>'+
+    '<div class="grid g3" style="margin-bottom:10px">'+
+    '<div class="card"><div class="mini muted">当日涨跌幅</div><div class="big" style="font-size:18px"><span class="'+cls(s.chgPct)+'">'+(s.chgPct==null?"—":pct(s.chgPct))+'</span></div></div>'+
+    '<div class="card"><div class="mini muted">板块内上涨/下跌家数</div><div class="big" style="font-size:18px">'+(s.upNum==null?"—":s.upNum+" / "+s.downNum)+'</div></div>'+
+    '<div class="card"><div class="mini muted">全市场涨幅排名</div><div class="big" style="font-size:18px">'+rank+' / '+(S.sectors||[]).length+'</div></div></div>'+
+    '<div class="concl"><div class="ct">'+badge("fact")+' 领涨个股：'+(s.leader?esc(s.leader)+'（'+pct(s.leaderChg)+'）':"—")+'</div>'+
+    '<div class="cev">来源：行业板块真实数据；列示个股仅作板块结构说明，<b>不构成个股推荐</b>。</div></div>'+
+    '<div class="concl"><div class="ct">'+badge("unc")+' 不确定性：单日板块涨跌幅受事件与资金流影响大，需结合连续多日与宽度数据共同判断</div></div></div>';
+}
+function drillRisk(i){
+  const d=S.derived||{};
+  const map=[["市场宽度恶化","上涨占比与净上涨占比",d.upRatio==null?"—":d.upRatio.toFixed(1)+"% / "+(d.netRatio==null?"—":d.netRatio.toFixed(1)+"%"),"E2","上涨占比连续3日<45% 且净上涨占比<-10%"],
+    ["量能与杠杆收缩","量比与两融余额",(d.amtRatio==null?"—":d.amtRatio.toFixed(2))+" / "+(((S.evidence||[]).find(e=>e.id==="E8")||{}).value||"—"),"E4,E8","20/60日量比跌破0.90"],
+    ["情绪过热后分歧","最高连板与炸板率",(d.maxLB==null?"—":d.maxLB+"板")+" / "+(d.brokenRate==null?"—":d.brokenRate.toFixed(0)+"%"),"E3","最高连板≥9板且炸板率>45%"],
+    ["估值约束","宽基PE分位",((S.evidence||[]).find(e=>e.id==="E7")||{}).value||"—","E7","估值分位变化需结合盈利预期，不由本产品单独判断"]];
+  const [name,indicator,cur,evs,trig]=map[i];
+  document.getElementById("drillOut").innerHTML='<div class="card"><h3>风险变量 · '+name+'</h3>'+
+    '<div class="concl"><div class="ct">'+badge("fact")+' 监控指标：'+indicator+'</div><div class="cev">当前读数：<b>'+esc(cur)+'</b></div>'+
+    '<div class="cev">关联证据：'+evs.split(",").map(id=>'<span class="ev-ref" onclick="showEv(\''+id+'\')">'+id+'</span>').join("")+'</div></div>'+
+    '<div class="concl"><div class="ct">'+badge("unc")+' 触发式观察：'+trig+'</div>'+
+    '<div class="cev">本产品不预测该变量是否发生；条件成立后研判状态将在下次刷新时自动重新评估。</div></div></div>';
+}
+
+/* ---------- 健康 ---------- */
+function renderHealth(){
+  const H=S.health||{};
+  const M={ok:["b-ok","正常","ok"],err:["b-err","调用失败","err"],stale:["b-warn","回退/过期","warn"],missing:["b-err","缺失","err"]};
+  document.getElementById("healthList").innerHTML=Object.keys(H).map(k=>{const h=H[k];const m=M[h.status]||M.ok;
+    return '<div class="hrow"><span class="dot '+m[2]+'"></span><b style="width:130px">'+esc(h.label||k)+'</b>'+
+    '<span class="badge '+m[0]+'">'+m[1]+'</span><span class="muted">'+esc(h.message||("耗时 "+h.ms+"ms"))+'</span>'+
+    '<span class="mono muted" style="margin-left:auto">最后成功 '+(h.lastOk||"—")+'</span></div>'}).join("");
+  const bad=Object.keys(H).filter(k=>H[k].status!=="ok");
+  const b=document.getElementById("healthBanner");
+  b.style.display=bad.length?"block":"none";
+  if(bad.length)b.innerHTML="⚠ 以下数据源异常："+bad.map(k=>"【"+esc(H[k].label||k)+"："+esc(H[k].message||H[k].status)+"】").join("、")+"。相关证据已挂起，结论置信度已下调。";
+  document.getElementById("faultList").innerHTML=FAULTS.map(k=>
+    '<div class="hrow"><span style="flex:1">'+(FAULT_LABEL[k]||k)+'</span>'+
+    '<label class="switch"><input type="checkbox" '+(SIM.has(k)?"checked":"")+' onchange="toggleFault(\''+k+'\',this.checked)"><i></i></label></div>').join("");
+  const U=S.providerUsed||{};
+  const PL={kline:"指数日K线",quote:"行情快照",breadth:"市场宽度",pool:"涨跌停池",news:"财经快讯",margin:"两融余额",valuation:"指数估值",sector:"行业板块"};
+  const PN={fuyao:"同花顺金融数据API（扶摇）",ifind:"iFinD MCP",eastmoney:"东方财富公开源"};
+  document.getElementById("providerBox").innerHTML=Object.keys(PL).map(k=>{
+    const p=U[k];
+    return '<div class="hrow"><span style="width:92px">'+PL[k]+'</span>'+
+      '<span class="badge '+(p==="fuyao"||p==="ifind"?"b-ok":(p?"b-fact":"b-warn"))+'">'+(p?(PN[p]||p):"未记录")+'</span>'+
+      '<span class="muted">' + esc(((S.sources || {})[k]) || "") + '</span></div>';}).join("")+
+    '<div class="muted" style="margin-top:8px">配置 <span class="mono">FUYAO_API_KEY</span> 后<b>官方源自动优先</b>；任一数据集取数失败时<b>逐项回退</b>公开源，并在证据「来源」字段如实标注实际使用的源（绝不谎称官方源）。</div>';
+  document.getElementById("schedInfo").textContent=(S.scheduler&&S.scheduler.tradingDay?("交易日 · 当前阶段："+S.scheduler.phase):"非交易日（低频刷新）");
+  document.getElementById("fetchInfo").textContent=(S.msTotal?S.msTotal+" ms":"—");
+  document.getElementById("newsArchiveInfo").textContent=((S.newsDates||[]).length)+" 天（最新日 "+((S.newsStats&&S.newsStats.total)||0)+" 条）";
+}
+function toggleFault(k,on){on?SIM.add(k):SIM.delete(k)}
+
+function showEv(id){
+  const e=(S.evidence||[]).find(x=>x.id===id);if(!e)return;
+  const TN={fact:"数据源原始读数",infer:"按明示规则计算的统计结论",judge:"含不确定性的解释性判断"};
+  document.getElementById("modalBody").innerHTML='<h3>'+e.id+' · '+esc(e.name)+' '+badge(e.type)+'</h3>'+
+    '<p class="mini" style="margin-bottom:10px">'+(e.disabled?"该数据源当前不可用，证据已挂起。":esc(e.text))+'</p>'+
+    '<div class="kv"><b>来源</b><span>'+esc(e.source)+'</span><b>时点</b><span class="mono">'+e.asOf+'</span>'+
+    '<b>单位</b><span>'+esc(e.unit)+'</span><b>统计口径</b><span>'+esc(e.caliber)+'</span>'+
+    '<b>证据性质</b><span>'+(TN[e.type]||"—")+'</span></div>';
+  document.getElementById("mask").classList.add("on");
+}
+function closeModal(){document.getElementById("mask").classList.remove("on")}
+
+document.getElementById("tabs").addEventListener("click",e=>{
+  const b=e.target.closest(".tab");if(!b)return;
+  document.querySelectorAll(".tab").forEach(t=>t.classList.remove("on"));b.classList.add("on");
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("on"));
+  document.getElementById("p-"+b.dataset.p).classList.add("on");
+  if(b.dataset.p==="viz")renderViz();       // 切到可视化页时按最新新闻统计重绘
+});
+document.getElementById("drillSeg").addEventListener("click",e=>{
+  const b=e.target.closest("button");if(!b)return;
+  [...b.parentElement.children].forEach(x=>x.classList.remove("on"));b.classList.add("on");
+  drillMode=b.dataset.k;renderDrill();
+});
+load();
+setInterval(()=>{ if(document.visibilityState==="visible") load(); }, 60000);
+</script>
+</body>
+</html>

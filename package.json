@@ -1,0 +1,15 @@
+{
+  "name": "marketpulse",
+  "version": "2.0.0",
+  "description": "闻势 MarketPulse — AI 驱动的 A 股市场大势研判（真实数据 · 每日自动更新）",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "refresh": "node scripts/refresh.js",
+    "smoke": "node scripts/smoke-render.js",
+    "test:fuyao": "node scripts/fuyao-selftest.js"
+  },
+  "engines": { "node": ">=18" },
+  "private": true,
+  "license": "MIT"
+}
